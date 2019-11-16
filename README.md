@@ -13,7 +13,9 @@
 crtndtry uses a number of different sources to create a list of root subdomains (i.e.: corp.example.com)                                         
 
 # Usage
+```
 ./crtndstry example.com
+```
 
 # Sources 
 - [crt.sh](https://crt.sh) - requires using different patterns as shown in the source 
