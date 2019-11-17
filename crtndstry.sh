@@ -4,6 +4,11 @@
 # twitch.tv/nahamsec
 # Thank you to nukedx and dmfroberson for helping debug/improve
 
+if [ ! -x "$(command -v jq)" ]; then
+	echo "[-] This script requires jq. Exiting."
+	exit 1
+fi
+
 certdata(){
 	#give it patterns to look for within crt.sh for example %api%.site.com
 	declare -a arr=("api" "corp" "dev" "uat" "test" "stag" "sandbox" "prod" "internal")
