@@ -11,7 +11,7 @@ digi()
 		sleep 0.5
 		RES=`digi $1`
 	fi
-	echo $RES | jq -r '.data.certificateDetail[].commonName,.data.certificateDetail[].subjectAlternativeNames[]' | grep -w "$1\$" | grep -v '*' | grep -v "^$1\$" | sort -u
+	echo $RES | jq -r '.data.certificateDetail[].commonName,.data.certificateDetail[].subjectAlternativeNames[]' | grep -w "$1\$" | grep -v '*' | grep -v "^$1\$" | sort -u || '' # || '' handles empty responses
 }
 
 
@@ -20,7 +20,10 @@ certdata(){
 	declare -a arr=("api" "corp" "dev" "uat" "test" "stage" "sandbox" "prod" "internal")
 	for i in "${arr[@]}"; do
 		#get a list of domains based on our patterns in the array
-		crtsh=$(curl -s https://crt.sh/\?q\=%25$i%25.$1\&output\=json | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | tee -a rawdata/crtsh.txt )
+		sub="${i}.$1"
+		url="https://crt.sh/?q=${sub}&output=json"
+		crtsh=`curl -s "${url}"`
+		crtsh=`echo ${crtsh} | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | tee -a rawdata/crtsh.txt || ''`
 	done
 		#get a list of domains from certspotter
 		certspotter=$(curl -s https://certspotter.com/api/v0/certs\?domain\=$1 | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep -w $1\$ | tee rawdata/certspotter.txt)
