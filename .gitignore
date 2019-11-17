@@ -1,0 +1,5 @@
+
+*.txt
+*.json
+rawdata/*.txt
+rawdata/*.json
