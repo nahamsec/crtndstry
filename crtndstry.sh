@@ -31,7 +31,7 @@ rootdomains() { #this creates a list of all unique root sub domains
 	cat rawdata/crtsh.txt | rev | cut -d "."  -f 1,2,3 | sort -u | rev > ./$1-temp.txt
 	cat rawdata/certspotter.txt | rev | cut -d "."  -f 1,2,3 | sort -u | rev >> ./$1-temp.txt
 	domain=$1
-	jq -r '.data.certificateDetail[].commonName,.data.certificateDetail[].subjectAlternativeNames[]' rawdata/digicert.json | sed 's/"//g' | grep -w "$domain$" | rev | cut -d "."  -f 1,2,3 | sort -u | rev >> ./$1-temp.txt
+	jq -r '.data.certificateDetail[].commonName,.data.certificateDetail[].subjectAlternativeNames[]' rawdata/digicert.json | sed 's/"//g' | grep -w "$domain$" | grep -v '^*.' | rev | cut -d "."  -f 1,2,3 | sort -u | rev >> ./$1-temp.txt
 	cat $1-temp.txt | sort -u | tee ./data/$1-$(date "+%Y.%m.%d-%H.%M").txt; rm $1-temp.txt
 	echo "[+] Number of domains found: $(cat ./data/$1-$(date "+%Y.%m.%d-%H.%M").txt | wc -l)"
 }
