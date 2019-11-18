@@ -30,5 +30,5 @@ Here's the VOD of me writing this tool during one of my streams
 
 # Credits
 - nukedx 
-- dmfr
+- dmfroberson
 
