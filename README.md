@@ -23,7 +23,8 @@ crtndtry uses a number of different sources to create a list of root subdomains 
 # Video
 Here's the VOD of me writing this tool during one of my streams
 
-(https://i9.ytimg.com/vi/o37L5n6w9BQ/hqdefault.jpg?time=1574090141631&sqp=CPTqyu4F&rs=AOn4CLD6SMPnUwpGndoGBc_lF2w91LQfnw)](https://youtu.be/o37L5n6w9BQ)
+[![](https://i9.ytimg.com/vi/o37L5n6w9BQ/hqdefault.jpg?time=1574090141631&sqp=CPTqyu4F&rs=AOn4CLD6SMPnUwpGndoGBc_lF2w91LQfnw)](https://youtu.be/o37L5n6w9BQ)
+
 
 # Credits
 - nukedx 
