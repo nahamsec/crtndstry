@@ -2,18 +2,33 @@
 # twitch.tv/nahamsec
 # Thank you to nukedx and dmfroberson for helping debug/improve
 
+digi()
+{
+	RES=`curl "https://ssltools.digicert.com/chainTester/webservice/ctsearch/search?keyword=$1" -s -k`
+	echo $RES > rawdata/digicert.json
+	# retry if the 404 shows up, fixes https://github.com/nahamsec/crtndstry/issues/3
+	if [[ $RES =~ "DOCTYPE" ]]; then
+		sleep 0.5
+		RES=`digi $1`
+	fi
+	echo $RES | jq -r '.data.certificateDetail[].commonName,.data.certificateDetail[].subjectAlternativeNames[]' | grep -w "$1\$" | grep -v '*' | grep -v "^$1\$" | sort -u || '' # || '' handles empty responses
+}
+
+
 certdata(){
 	#give it patterns to look for within crt.sh for example %api%.site.com
-	declare -a arr=("api" "corp" "dev" "uat" "test" "stag" "sandbox" "prod" "internal")
-	for i in "${arr[@]}"
-	do
+	declare -a arr=("api" "corp" "dev" "uat" "test" "stage" "sandbox" "prod" "internal")
+	for i in "${arr[@]}"; do
 		#get a list of domains based on our patterns in the array
-		crtsh=$(curl -s https://crt.sh/\?q\=%25$i%25.$1\&output\=json | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | tee -a rawdata/crtsh.txt )
+		sub="${i}.$1"
+		url="https://crt.sh/?q=${sub}&output=json"
+		crtsh=`curl -s "${url}"`
+		crtsh=`echo ${crtsh} | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u | tee -a rawdata/crtsh.txt || ''`
 	done
 		#get a list of domains from certspotter
 		certspotter=$(curl -s https://certspotter.com/api/v0/certs\?domain\=$1 | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep -w $1\$ | tee rawdata/certspotter.txt)
 		#get a list of domains from digicert
-		digicert=$(curl -s https://ssltools.digicert.com/chainTester/webservice/ctsearch/search?keyword=$1 -o rawdata/digicert.json) 
+		digicert=$(digi $1) 
 		echo "$crtsh"
 		echo "$certspotter" 
 		echo "$digicert" 
